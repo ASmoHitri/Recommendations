@@ -26,7 +26,6 @@
         <kumuluzee-health.version>1.0.1</kumuluzee-health.version>
         <kumuluzee-metrics.version>1.1.1</kumuluzee-metrics.version>
         <kumuluzee-logs.version>1.3.0</kumuluzee-logs.version>
-        <postgresql.version>42.2.5</postgresql.version>
     </properties>
 
     <dependencyManagement>
@@ -62,11 +61,6 @@
                 <artifactId>kumuluzee-logs-log4j2</artifactId>
                 <groupId>com.kumuluz.ee.logs</groupId>
                 <version>${kumuluzee-logs.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>${postgresql.version}</version>
             </dependency>
             <dependency>
                 <groupId>asmohitri</groupId>
