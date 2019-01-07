@@ -23,7 +23,7 @@ spec:
         - name: KUMULUZEE_SERVER_HTTP_PORT
           value: "8080"
         - name: KUMULUZEE_SERVER_BASE-URL
-          value: http://159.122.186.127:31838
+          value: http://159.122.186.127:32289
         - name: KUMULUZEE_HEALTH_CHECKS_ETCDHEALTHCHECK_CONNECTIONURL
           value: http://etcd:2379/health
         ports:
