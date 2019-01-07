@@ -20,7 +20,6 @@ import java.util.*;
 @ApplicationScoped
 public class RecommendationsBean {
 
-
     @Context
     protected UriInfo uriInfo;
 
@@ -38,21 +37,20 @@ public class RecommendationsBean {
     public List<Song> getRecommendations(int userId){
         if (basePathCatalogs.isPresent() && basePathSubscriptions.isPresent()) {
             try {
+                List<PlaylistSubscriptions> playlistIds = httpClient.target(basePathSubscriptions.get()+"/api/v1/users/"+ userId +"/playlists")
+                        .request().get(new GenericType<List<PlaylistSubscriptions>>(){});
+                List<PlaylistCatalogs> playlists = new ArrayList<>();
+                for (PlaylistSubscriptions p: playlistIds){
+                    PlaylistCatalogs current = httpClient.target(basePathCatalogs.get()+"/api/v1/playlists/"+p.getId())
+                            .request().get(new GenericType<PlaylistCatalogs>(){});
+                    playlists.add(current);
+                }
 
-//            List<PlaylistSubscriptions> playlistIds = httpClient.target(basePathSubscriptions.get()+"/api/v1/users/{userId}/playlists")
-//                    .request().get(new GenericType<List<PlaylistSubscriptions>>(){});
-//            List<PlaylistCatalogs> playlists = new ArrayList<PlaylistCatalogs>();
-//            for (PlaylistSubscriptions p: playlistIds){
-//                PlaylistCatalogs current = httpClient.target(basePathCatalogs.get()+"/api/v1/playlists/{id}")
-//                        .request().get(new GenericType<PlaylistCatalogs>(){});
-//                playlists.add(current);
-//            }
+//                List<PlaylistCatalogs> playlists = httpClient.target(basePathCatalogs.get() + "/api/v1/playlists?where=userId:EQ:" + userId)
+//                        .request().get(new GenericType<List<PlaylistCatalogs>>() {
+//                        }); //boljse?
 
-                List<PlaylistCatalogs> playlists = httpClient.target(basePathCatalogs.get() + "/api/v1/playlists?where=userId:EQ:" + userId)
-                        .request().get(new GenericType<List<PlaylistCatalogs>>() {
-                        }); //boljse?
-
-                List<Genre> userGenres = new ArrayList<Genre>();
+                List<Genre> userGenres = new ArrayList<>();
 
                 for (PlaylistCatalogs p : playlists) {
                     List<Song> current_songs = p.getSongs();
@@ -60,7 +58,7 @@ public class RecommendationsBean {
                         userGenres.add(s.getGenre());
                     }
                 }
-                Set<Genre> userGenresSet = new HashSet<Genre>(userGenres);
+                Set<Genre> userGenresSet = new HashSet<>(userGenres);
                 int max = 0;
                 Genre maxGenre = new Genre();
                 for (Genre g : userGenresSet) {
@@ -70,12 +68,15 @@ public class RecommendationsBean {
                         maxGenre = g;
                     }
                 }
-                List<Song> recommendation = httpClient.target(basePathCatalogs.get() + "/api/v1/songs?where=genre_id:EQ:" + maxGenre.getId())
+                List<Song> recommendation = httpClient.target(basePathCatalogs.get() + "/api/v1/songs?where=genre.id:EQ:" + maxGenre.getId())
                         .request().get(new GenericType<List<Song>>() {
-                        }); // tu genre id nisem preprican ce prav.
+                        });
 
                 Collections.shuffle(recommendation);
-                return recommendation.subList(0, 5);
+                if (recommendation.size() > 5) {
+                    recommendation = recommendation.subList(0, 5);
+                }
+                return recommendation;
             } catch (WebApplicationException | ProcessingException exception) {
                 System.out.println(exception.getMessage());
                 return null;
