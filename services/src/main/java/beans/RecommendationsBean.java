@@ -46,10 +46,6 @@ public class RecommendationsBean {
                     playlists.add(current);
                 }
 
-//                List<PlaylistCatalogs> playlists = httpClient.target(basePathCatalogs.get() + "/api/v1/playlists?where=userId:EQ:" + userId)
-//                        .request().get(new GenericType<List<PlaylistCatalogs>>() {
-//                        }); //boljse?
-
                 List<Genre> userGenres = new ArrayList<>();
 
                 for (PlaylistCatalogs p : playlists) {
